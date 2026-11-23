@@ -14,7 +14,7 @@ concurrency:
 
 jobs:
   mirror:
-    if: github.repository == 'and101/RedditFilter'
+    if: github.repository == 'and101/RedditFilter' || github.repository == 'MoritzHinterleitner/RedditFilter'
     runs-on: ubuntu-latest
     steps:
       - name: Push branches and tags
@@ -26,5 +26,12 @@ jobs:
           echo 'github.com ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIOMqqnkVzrm0SdG6UOoqKLsabgH5C9okWi0dh2l9GKJl' > "$RUNNER_TEMP/known_hosts"
           export GIT_SSH_COMMAND="ssh -i $RUNNER_TEMP/key -o IdentitiesOnly=yes -o UserKnownHostsFile=$RUNNER_TEMP/known_hosts -o StrictHostKeyChecking=yes"
           git clone --bare "https://github.com/${GITHUB_REPOSITORY}.git" src.git
-          git -C src.git push git@github.com:and101/RedditFilter-private.git 'refs/heads/*:refs/heads/*' 'refs/tags/*:refs/tags/*'
+          if [ "$GITHUB_REPOSITORY" = and101/RedditFilter ]; then
+            git -C src.git push git@github.com:and101/RedditFilter-private.git 'refs/heads/*:refs/heads/*' 'refs/tags/*:refs/tags/*'
+          else
+            # The private copy has commits of its own on main, so the fork's main goes to fork-main
+            # (merged into main from there) instead of replacing it.
+            git -C src.git push --force git@github.com:MoritzHinterleitner/RedditFilter-private.git \
+              'refs/heads/main:refs/heads/fork-main' 'refs/tags/*:refs/tags/*'
+          fi
           rm -f "$RUNNER_TEMP/key"
