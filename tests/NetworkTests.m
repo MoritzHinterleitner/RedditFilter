@@ -13,6 +13,7 @@
 // LinkPanel.x hooks Reddit's player, which isn't part of this test.
 void RFSetHideLinkPanel(BOOL hide) {}
 void RFSetHideRefreshPill(BOOL hide) {}
+void RFSetStartOnFollowing(BOOL start) {}
 // FeedPosition.x hooks Reddit's scene delegate, which isn't part of this test.
 void RFSetKeepFeedPosition(BOOL keep) {}
 // PostPageFeed.x hides part of Reddit's post page, which isn't part of this test.
@@ -48,6 +49,8 @@ void RFBrowserLoginWithCredentials(NSString *username, NSString *password, void 
 }
 void RFSetColoredComments(BOOL enabled, BOOL apolloStyle) {}
 void RFSetSwipeCollapse(BOOL enabled, BOOL tapToo, BOOL haptics) {}
+void RFSetFeedSwipe(BOOL enabled, BOOL haptics) {}
+BOOL RFFeedSwipeEnabled(void) { return YES; }
 
 static void Check(BOOL condition, NSString *message) {
   if (!condition) { NSLog(@"FAIL: %@", message); exit(1); }

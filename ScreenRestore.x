@@ -23,6 +23,7 @@
 
 #import <UIKit/UIKit.h>
 #import <objc/message.h>
+#import <malloc/malloc.h>
 #import <objc/runtime.h>
 #import <os/lock.h>
 #import "FeedCache.h"
@@ -427,12 +428,18 @@ static NSString *RFLastCloseName(void) {
   }
 }
 
-NSString *RFLastCloseDescription(void) {
+NSString *RFLastCloseStatus(void) {
+  return gLastClose == RFLastCloseInForeground ? @"Crashed or stopped"
+         : gLastClose == RFLastCloseByIOS || gLastClose == RFLastCloseSwipedAway ? RFLastCloseName()
+                                                                                 : @"Unknown";
+}
+
+NSString *RFLastCloseDescription(BOOL forReport) {
   // "Closed by iOS · snapshot kept · same session", then one "Label: value" per line.
   NSString *first = gSignals.length ? [NSString stringWithFormat:@"%@ · %@", RFLastCloseName(), gSignals] : RFLastCloseName();
   NSMutableArray *lines = [NSMutableArray arrayWithObject:first];
   NSString *left = [gLastSession[@"left"] isKindOfClass:NSString.class] ? gLastSession[@"left"] : nil;
-  if (left.length) [lines addObject:[@"Left open: " stringByAppendingString:left]];
+  if (left.length && !forReport) [lines addObject:[@"Left open: " stringByAppendingString:left]];
   if (gOutcome.length) [lines addObject:[@"At launch: " stringByAppendingString:gOutcome]];
   return [lines componentsJoinedByString:@"\n"];
 }
@@ -1266,7 +1273,11 @@ static id RFAccountContext(void) {
   UITabBarController *tabs = RFTabBar();
   Ivar ivar = tabs ? class_getInstanceVariable(tabs.class, "accountContext") : NULL;
   if (!ivar) return nil;
-  id value = (__bridge id)(*(void **)((uint8_t *)(__bridge void *)tabs + ivar_getOffset(ivar)));
+  void *raw = *(void **)((uint8_t *)(__bridge void *)tabs + ivar_getOffset(ivar));
+  // Only a pointer to a heap object, before it's used as one: if Reddit changes how it keeps the property
+  // (a struct or an enum, say), these raw bytes are something else and messaging them would crash.
+  if (!raw || ((uintptr_t)raw & 0xF) || (intptr_t)raw < 0 || !malloc_zone_from_ptr(raw)) return nil;
+  id value = (__bridge id)raw;
   Class valueClass = object_getClass(value);
   // One object of a class (not a class itself nor a plain number), and the app's account context (Reddit's
   // own AccountContext class). Checked here so a renamed or moved property can't pass something else on.
@@ -1728,7 +1739,7 @@ static void RFFinishRestore(void) {
 @implementation RFCoverSkip
 + (void)skip:(UIButton *)button {
   if (!gPlan) return;
-  gOutcome = @"skipped (you tapped Skip)";
+  gOutcome = @"skipped (you tapped \"Skip\")";
   RFFinishRestore();
 }
 @end
@@ -2271,9 +2282,9 @@ static NSDictionary *RFUsablePlan(NSDictionary *plan, BOOL *tooOld) {
 }
 
 static void RFPlanRestoreNow(void) {
-  if (!RFFeedCacheEnabled()) return (void)(gOutcome = @"nothing (Keep feed position off)");
+  if (!RFFeedCacheEnabled()) return (void)(gOutcome = @"nothing (\"Keep feed position\" off)");
   if (!RFMayRestore()) return (void)(gOutcome = @"skipped (swiped away)");
-  if (!gRestoreScreens) return (void)(gOutcome = @"feeds only (Reopen community and post off)");
+  if (!gRestoreScreens) return (void)(gOutcome = @"feeds only (\"Reopen screens\" off)");
   BOOL tooOld = NO;
   NSDictionary *plan = RFUsablePlan(RFReadJSON(@"Screens.json"), &tooOld);
   // What was waiting for a return to Home when Reddit was left (only for a Home plan).

@@ -43,7 +43,7 @@ FBPCommentSheetAdapterView
 # Keep feed position (FeedPosition.x)
 _TtC6Reddit13SceneDelegate
 _TtC8SliceKit18ListCollectionView
-# Reopen community and post (ScreenRestore.x)
+# Reopen screens (ScreenRestore.x)
 _TtC9Home_Impl41PerFeedScreenviewHomeScreenViewController
 _TtC18Subreddit_Internal29SubredditScreenViewController
 _TtC8Profiles30ProfileCoreStackViewController
@@ -67,6 +67,10 @@ isTruncatedFetch
 commentForest
 # Refresh button on Home hidden (RefreshPill.x)
 _TtC9Home_Impl22RefreshPillWrapperView
+# Start on Following (HomeStartFeed.m): the per-account last Home tab, and the tabs that show the switch
+kLastVisitedHomeFeed
+_TtC9Home_Impl24HomeScreenViewController
+_TtC13RPLComponents6RPLTab
 # "From your feed" hidden below a post's comments (PostPageFeed.x)
 FeedStackSliceViewModel
 # Keep feed position: Following and Popular (FeedCache.m)
@@ -85,6 +89,17 @@ SliceKit.FlexStackView
 _TtC21PDP_CommentSheet_Impl16CommentSliceView
 _TtC63Components_CommentTreeItem_CommentTreeItemPresentation_Internal24CommentTreeItemSliceView
 _TtC24RedditSliceKit_RPLSlices17RichTextSliceView
+# Swipe posts (FeedSwipe.x): the post card, its vote buttons, its ⋯ buttons and the ⋯ menu; its title and
+# the save request, for "Unsave"
+_TtC14FeedKit_Slices18FeedStackSliceView
+_TtC26RPLComponents_VoteControls13RPLVoteButton
+rpl3/overflowHorizontal
+ShareOverflowBottomSheet_Impl
+_TtC8PanModal30PanModalPresentationController
+reddit_post__promoted_post__overflow_button
+reddit_feed__post__classic_view_post_title
+reddit_feed__post__title_text
+UpdatePostSaveState
 # Ad-leaking experiments, removed from GetAllExperimentVariants and the cached ExperimentVariants
 GetAllExperimentVariants
 experimentVariants

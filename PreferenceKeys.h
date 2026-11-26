@@ -16,9 +16,11 @@
 #define kRedditFilterTapToCollapse @"kRedditFilterTapToCollapse" // with swipe on, keep tap and long press too
 #define kRedditFilterSwipeLeftToCollapse @"kRedditFilterSwipeLeftToCollapse" // with swipe on, left swipes collapse
 #define kRedditFilterSwipeRightToCollapse @"kRedditFilterSwipeRightToCollapse" // with swipe on, right swipes collapse
+#define kRedditFilterSwipePosts @"kRedditFilterSwipePosts" // swipe posts in feeds to upvote, downvote or save
 #define kRedditFilterVideosForYou @"kRedditFilterVideosForYou"
 #define kRedditFilterExtraCards @"kRedditFilterExtraCards" // hide suggestion, promo and survey cards in feeds
 #define kRedditFilterRefreshPill @"kRedditFilterRefreshPill" // hide the floating "new posts" button on Home
+#define kRedditFilterStartOnFollowing @"kRedditFilterStartOnFollowing" // Home opens on Following where it has tabs
 #define kRedditFilterKeywords @"kRedditFilterKeywords" // array of strings
 #define kRedditFilterKeywordComments @"kRedditFilterKeywordComments"
 #define kRedditFilterKeywordCommentReplies @"kRedditFilterKeywordCommentReplies"
@@ -35,5 +37,5 @@
 #define kRedditFilterSafariLinks @"kRedditFilterSafariLinks"
 #define kRedditFilterCheckUpdates @"kRedditFilterCheckUpdates"
 #define kRedditFilterCleanShareLinks @"kRedditFilterCleanShareLinks" // share plain links, not Reddit's /s/ ones
-#define kRedditFilterBlockTrackers @"kRedditFilterBlockTrackers" // answer analytics and event logging on the device
+#define kRedditFilterBlockTrackers @"kRedditFilterBlockTrackers" // answer analytics, ad and crash-report requests on the device
 #define kRedditFilterDiagnostics @"kRedditFilterDiagnostics" // record schema paths for bug reports

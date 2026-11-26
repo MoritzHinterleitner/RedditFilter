@@ -1,0 +1,80 @@
+{
+  "name": "RedditFilter",
+  "identifier": "com.and101.redditfilter.source",
+  "subtitle": "Reddit without the ads",
+  "description": "RedditFilter releases: the Reddit app with ads and other unwanted content filtered out.",
+  "iconURL": "https://and101.github.io/RedditFilter/icon.png",
+  "website": "https://github.com/and101/RedditFilter",
+  "tintColor": "#FF6A3D",
+  "apps": [
+    {
+      "name": "RedditFilter",
+      "bundleIdentifier": "com.reddit.Reddit",
+      "developerName": "and101",
+      "subtitle": "Reddit without the ads",
+      "localizedDescription": "The Reddit app with RedditFilter built in. Unofficial, and not affiliated with Reddit.\n\n• Hide promoted posts, comment ads, recommendations, NSFW posts and more\n• Filter by keyword, website or flair\n• Coloured comment threads and swipe to collapse\n• Clean share links and a tracker blocker\n• RedGIFs videos with sound\n\nLong press the sidebar button at the top left of Reddit to open RedditFilter.",
+      "iconURL": "https://and101.github.io/RedditFilter/icon.png",
+      "tintColor": "#FF6A3D",
+      "category": "social",
+      "screenshots": [
+        {
+          "imageURL": "https://raw.githubusercontent.com/and101/RedditFilter/main/screenshots/threads.png",
+          "width": 600,
+          "height": 1304
+        },
+        {
+          "imageURL": "https://raw.githubusercontent.com/and101/RedditFilter/main/screenshots/swipe.png",
+          "width": 600,
+          "height": 1304
+        },
+        {
+          "imageURL": "https://raw.githubusercontent.com/and101/RedditFilter/main/screenshots/settings.png",
+          "width": 600,
+          "height": 1304
+        },
+        {
+          "imageURL": "https://raw.githubusercontent.com/and101/RedditFilter/main/screenshots/settings3.png",
+          "width": 600,
+          "height": 1304
+        }
+      ],
+      "versions": [
+        {
+          "version": "2026.46.0",
+          "buildVersion": "676861",
+          "marketingVersion": "1.4.1 (Reddit 2026.46.0)",
+          "date": "2026-11-25",
+          "localizedDescription": "RedditFilter 1.4.1, built for Reddit 2026.46.0.\n\nNew in 1.4.1\n\n• Swipe posts: in feeds, swipe a post left to upvote it, or further to downvote it, and swipe right to save it. Repeat the same swipe to undo it. Profiles keep Reddit's own swipes. It's off by default.\n• Swipe gestures: the new name for the Collapsing comments page, where Swipe posts is. Swipe haptics now covers swipes on both posts and comments.\n• Start on Following: where Home has the For You and Following tabs, open Home on Following every time instead of the tab you last used. It's on the Posts and ads page, and only shows for accounts with those tabs.\n• Add the source: add RedditFilter to AltStore, SideStore, Feather or Signet with the buttons in the README, and new releases appear there.\n• Diagnostics is easier to read: one line for each check, with the details a tap away.\n• Settings text is shorter and clearer. Reopen community and post is now Reopen screens.\n• Backups include the new switches.\n\nFixes\n\n• Repeated posts on Home: Block trackers no longer stops Reddit's own usage data, as Home uses it to leave out posts you've already scrolled past. Other known analytics, crash report and ad trackers are still blocked.\n• Ads in search results that Reddit puts inside a list of results are now hidden with Promoted.\n• Logging in: reddit.com's feed and its ads no longer show for a moment as the login finishes.\n• iPhone Duo: scrolling back up in RedditFilter's settings no longer jumps on the closed screen.\n• Going back to a settings page no longer leaves a gap at the top.\n• Changing Scores or Awards now also applies to posts and comments that were already loaded and kept.\n• Some Reddit links opened from Safari no longer go missing.\n• Settings scrolling in Diagnostics no longer reports problems that aren't there.\n• Smaller stability and speed fixes.",
+          "downloadURL": "https://github.com/and101/RedditFilter/releases/download/v2026.46.0-1.4.1/RedditFilter_2026.46.0-1.4.1.ipa",
+          "size": 145313136,
+          "sha256": "32ae920fc45ff0022763a9b61980b74c3d9d06a454a5ac9e30c0d4144f73cc5b",
+          "minOSVersion": "16.0"
+        }
+      ],
+      "appPermissions": {
+        "entitlements": [
+          "aps-environment",
+          "com.apple.developer.applesignin",
+          "com.apple.developer.associated-domains",
+          "com.apple.developer.declared-age-range",
+          "com.apple.developer.icloud-container-identifiers",
+          "com.apple.developer.icloud-services",
+          "com.apple.developer.networking.multipath",
+          "com.apple.developer.ubiquity-container-identifiers",
+          "com.apple.security.application-groups",
+          "keychain-access-groups"
+        ],
+        "privacy": {
+          "NSCalendarsUsageDescription": "Reddit needs access to your calendar to operate the community calendar widget.",
+          "NSCameraUsageDescription": "Use your camera to record videos. See our Privacy Policy for more information.",
+          "NSFaceIDUsageDescription": "Reddit needs access to Face ID to unlock your Vault.",
+          "NSMicrophoneUsageDescription": "Reddit needs access to your microphone to post videos with audio.",
+          "NSPhotoLibraryAddUsageDescription": "Reddit needs permission to save photos and videos to your photo library.",
+          "NSPhotoLibraryUsageDescription": "Reddit needs access to your photo library to post, save, and upload photos or videos.",
+          "NSUserTrackingUsageDescription": "This allows Reddit to provide you with a better ads experience."
+        }
+      }
+    }
+  ],
+  "news": []
+}

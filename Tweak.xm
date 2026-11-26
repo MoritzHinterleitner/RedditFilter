@@ -9,12 +9,15 @@
 #import "JSONFilter.h"
 #import "LinkPanel.h"
 #import "RefreshPill.h"
+#import "HomeStartFeed.h"
 #import "Preferences.h"
 #import "PostPageFeed.h"
 #import "ScreenRestore.h"
 #import "TrackerBlock.h"
 #import "Redgifs.h"
 #import "SwipeCollapse.h"
+#import "FeedSwipe.h"
+#import "SavedPosts.h"
 
 #pragma mark - Preferences
 
@@ -46,13 +49,15 @@ extern "C" void RFReloadPreferences(void) {
   // Keep feed position: the kept posts were filtered with the old settings, so a change forgets them
   // (otherwise posts the new settings hide could come back). Not at launch, only when they change.
   static NSArray *lastFilters;
+  // Scores and awards too: kept posts carry them already hidden, so turning either off must forget them.
   NSArray *filters = @[ @(prefs.promoted), @(prefs.recommended), @(prefs.nsfw), @(prefs.videosForYou),
-                        @(prefs.extraCards), keywords ?: @[] ];
+                        @(prefs.extraCards), @(prefs.awards), @(prefs.scores), keywords ?: @[] ];
   if (lastFilters && ![lastFilters isEqualToArray:filters]) RFFeedCacheForget();
   lastFilters = filters;
   // Likewise the kept comments, filtered with the old comment settings.
   static NSArray *lastCommentFilters;
-  NSArray *commentFilters = @[ @(prefs.keywordComments), @(prefs.keywordCommentReplies), keywords ?: @[] ];
+  NSArray *commentFilters = @[ @(prefs.keywordComments), @(prefs.keywordCommentReplies), @(prefs.awards),
+                               @(prefs.scores), keywords ?: @[] ];
   if (lastCommentFilters && ![lastCommentFilters isEqualToArray:commentFilters]) RFScreenRestoreForgetComments();
   lastCommentFilters = commentFilters;
   os_unfair_lock_lock(&globalPrefsLock);
@@ -65,6 +70,7 @@ extern "C" void RFReloadPreferences(void) {
                        [defaults boolForKey:kRedditFilterColoredCommentsApollo]);
   RFSetHideLinkPanel([defaults boolForKey:kRedditFilterHideLinkPanel]);
   RFSetHideRefreshPill([defaults boolForKey:kRedditFilterRefreshPill]);
+  RFSetStartOnFollowing([defaults boolForKey:kRedditFilterStartOnFollowing]);
   RFSetHidePostPageFeed(prefs.recommended); // "From your feed" below a post's comments
   RFSetKeepFeedPosition([defaults boolForKey:kRedditFilterKeepFeedPosition]);
   RFSetRestoreScreens([defaults boolForKey:kRedditFilterKeepFeedPosition] &&
@@ -75,6 +81,7 @@ extern "C" void RFReloadPreferences(void) {
                      [defaults boolForKey:kRedditFilterSwipeCollapseHaptics],
                      [defaults boolForKey:kRedditFilterSwipeLeftToCollapse],
                      [defaults boolForKey:kRedditFilterSwipeRightToCollapse]);
+  RFSetFeedSwipe([defaults boolForKey:kRedditFilterSwipePosts], [defaults boolForKey:kRedditFilterSwipeCollapseHaptics]);
 }
 
 #pragma mark - Helpers shared with the settings screen
@@ -458,6 +465,23 @@ static BOOL RFIsAPIHost(NSString *host) {
     };
   }
 
+  // Swipe posts: which posts are saved, so a right swipe can say "Unsave" (read after the app has the answer).
+  BOOL isPostDetails = [operation isEqualToString:@"FeedPostDetailsByIds"];
+  if (completionHandler && (isPostDetails || [operation isEqualToString:@"UpdatePostSaveState"]) && RFFeedSwipeEnabled()) {
+    void (^appHandler)(NSData *, NSURLResponse *, NSError *) = completionHandler;
+    unsigned long long order = RFSavedPostsNoteRequest(request);
+    completionHandler = ^(NSData *data, NSURLResponse *response, NSError *error) {
+      appHandler(data, response, error);
+      if (!RFIsOK(response, error)) return;
+      if (isPostDetails)
+        dispatch_async(dispatch_get_global_queue(QOS_CLASS_UTILITY, 0), ^{
+          RFSavedPostsNoteDetails(request, data, order);
+        });
+      else
+        RFSavedPostsNoteChange(request, data);
+    };
+  }
+
   if (!completionHandler || !RFPrefsAnyEnabled(prefs) || !RFIsAPIHost(host)) return %orig(request, completionHandler);
 
   if ([operation isEqualToString:@"FeedPostDetailsByIds"]) RFRememberPostDetailsRequest(request);
@@ -508,6 +532,9 @@ static BOOL RFIsAPIHost(NSString *host) {
         // A first Home page that's mostly hidden posts can be too short to scroll, and the app only
         // loads more when you scroll. Fetch the next page now and hand both over together.
         void (^topUpAndFinish)(NSData *) = ^(NSData *firstPage) {
+          @synchronized(lock) {
+            if (delivered) return; // the deadline already handed the page over
+          }
           NSURLRequest *topUp = RFFeedTopUpRequest(request, firstPage);
           if (!topUp) return deliver(firstPage);
           progress(firstPage);
@@ -533,11 +560,15 @@ static BOOL RFIsAPIHost(NSString *host) {
         NSData *page = data;
         __block NSData *detailsData = nil;
         __block NSDictionary *videoURLs = nil;
+        __block NSData *checkedPage = nil; // the page with the full-text check applied, done once
         // The page with whatever has come back so far. Call with lock held (it's reentrant, so
         // progress can be called under it too, which keeps the latest page from going backwards).
         NSData *(^pageSoFar)(void) = ^NSData *{
           NSData *result = page;
-          if (detailsData) result = RFFeedHidingFullTextMatches(result, detailsData, prefs) ?: result;
+          if (detailsData) {
+            if (!checkedPage) checkedPage = RFFeedHidingFullTextMatches(page, detailsData, prefs) ?: page;
+            result = checkedPage;
+          }
           if (videoURLs.count) result = RFRedgifsResponse(result, videoURLs) ?: result;
           return result;
         };
@@ -548,8 +579,11 @@ static BOOL RFIsAPIHost(NSString *host) {
           [[session dataTaskWithRequest:RFOwnRequest(details)
                       completionHandler:^(NSData *fetched, NSURLResponse *detailsResponse, NSError *detailsError) {
                         @synchronized(lock) {
-                          if (RFIsOK(detailsResponse, detailsError)) detailsData = fetched;
-                          progress(pageSoFar());
+                          // Too late once the page has been handed over: nothing more to work out.
+                          if (!delivered) {
+                            if (RFIsOK(detailsResponse, detailsError)) detailsData = fetched;
+                            progress(pageSoFar());
+                          }
                         }
                         dispatch_group_leave(group);
                       }] resume];
@@ -558,8 +592,10 @@ static BOOL RFIsAPIHost(NSString *host) {
           dispatch_group_enter(group);
           RFFetchRedgifsVideos(redgifs, hd, ^(NSDictionary *found) {
             @synchronized(lock) {
-              videoURLs = found;
-              progress(pageSoFar());
+              if (!delivered) {
+                videoURLs = found;
+                progress(pageSoFar());
+              }
             }
             dispatch_group_leave(group);
           });
@@ -636,7 +672,9 @@ BOOL RFCleanCachedExperiments(void) {
   return globalPrefs.scores ? YES : %orig;
 }
 - (BOOL)shouldAutoCollapse {
-  return (globalPrefs.automod && [((Comment *)self).authorPk isEqualToString:@"t2_6l4z3"]) ? YES : %orig;
+  if (!globalPrefs.automod || ![self respondsToSelector:@selector(authorPk)]) return %orig;
+  id author = ((Comment *)self).authorPk;
+  return [author isKindOfClass:NSString.class] && [author isEqualToString:@"t2_6l4z3"] ? YES : %orig;
 }
 %end
 
@@ -656,9 +694,11 @@ BOOL RFCleanCachedExperiments(void) {
     kRedditFilterTapToCollapse : @NO,
     kRedditFilterSwipeLeftToCollapse : @YES,
     kRedditFilterSwipeRightToCollapse : @NO,
+    kRedditFilterSwipePosts : @NO,
     kRedditFilterVideosForYou : @NO,
     kRedditFilterExtraCards : @NO,
     kRedditFilterRefreshPill : @NO,
+    kRedditFilterStartOnFollowing : @NO,
     kRedditFilterKeywordComments : @NO,
     kRedditFilterKeywordCommentReplies : @YES,
     kRedditFilterRedgifsDirect : @NO,

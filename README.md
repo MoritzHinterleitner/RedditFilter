@@ -4,6 +4,8 @@ Filters unwanted content from the Reddit app, and adds the comment, video and li
 
 To open RedditFilter, long press the sidebar button at the top left of Reddit, or go to Profile → Settings and tap the button at the top right.
 
+To get it, see [Install](#install).
+
 <table>
   <tr>
     <th colspan="2">Coloured comment threads</th>
@@ -27,13 +29,13 @@ To open RedditFilter, long press the sidebar button at the top left of Reddit, o
   </tr>
   <tr>
     <td align="center" width="25%"><img src="screenshots/settings.png" width="200" alt="RedditFilter settings: root page"></td>
-    <td align="center" width="25%"><img src="screenshots/settings2.png" width="200" alt="RedditFilter settings: Collapsing comments"></td>
+    <td align="center" width="25%"><img src="screenshots/settings2.png" width="200" alt="RedditFilter settings: Swipe gestures"></td>
     <td align="center" width="25%"><img src="screenshots/settings3.png" width="200" alt="RedditFilter settings: Keywords"></td>
     <td align="center" width="25%"><img src="screenshots/safari.png" width="200" alt="Steps to turn on the RedditFilter Safari extension"></td>
   </tr>
   <tr>
     <td align="center"><b>Settings</b><br><sub>Filters, display and more</sub></td>
-    <td align="center"><b>Collapsing comments</b><br><sub>Swipe or tap, and AutoMod</sub></td>
+    <td align="center"><b>Swipe gestures</b><br><sub>Collapse comments, vote and save</sub></td>
     <td align="center"><b>Keywords</b><br><sub>Words to hide, and comment options</sub></td>
     <td align="center"><b>Open Reddit links here</b><br><sub>Set up the Safari extension</sub></td>
   </tr>
@@ -45,28 +47,30 @@ To open RedditFilter, long press the sidebar button at the top left of Reddit, o
 
 ### Filters
 
-- **Posts and ads**: hide promoted posts, ads in search results and comment ads, recommendations (including the endless **From your feed** list below a post's comments), NSFW posts, the Videos for you carousel, extra cards such as suggested communities, promos and surveys, and the floating new posts button on Home (**Refresh button**). These switches show that content when on, so turn one off to hide it. A For You page left short by hidden posts is topped up from the next page.
+- **Posts and ads**: hide promoted posts, ads in search results and comment ads, recommendations (including the endless **From your feed** list below a post's comments), NSFW posts, the **Videos for you** carousel, extra cards such as suggested communities, promos and surveys, and the floating new posts button on Home (**Refresh button**). These switches show that content when on, so turn one off to hide it. A For You page left short by hidden posts is topped up from the next page.
+- **Start on Following**: where Home has the For You and Following tabs, open Home on Following every time instead of the tab you last used. The switch is on the **Posts and ads** page, and only shows for accounts with those tabs.
 - **Keywords**: hide posts that mention a word or phrase. Matching is whole-word and ignores capitals, and it checks a post's full text, not just the title and preview. With **Filter comments too**, comments that mention a keyword are hidden with their replies, or replaced by a placeholder if you want to keep the replies.
 - **Website and flair**: add `site:x.com` to the keywords to hide posts linking to that site, `flair:Meme` to hide a flair everywhere, or `r/gaming flair:Meme` to hide it in one community.
 
 ### Privacy
 
 - **Clean share links**: Reddit's share links (`…/s/…`) are tied to your account, so Reddit can link everyone who opens one back to you. This shares the plain link instead, without tracking.
-- **Block trackers**: stops analytics, crash reports, ad tracking and Reddit's usage data from leaving your device. Logging in and feeds aren't affected.
+- **Block trackers**: stops known analytics, crash report and ad trackers. Reddit's own usage data is still sent. Logging in and feeds aren't affected.
 
 ### Display
 
 - **Appearance**: hide awards and scores on posts and comments, and give each reply level its own colour with **Coloured comment threads**. **Apollo style** colours only each comment's own line.
 - **Article links**: choose how links opened from a post show: **Reddit's viewer**, **Reddit's viewer, full page** (without the votes and comments panel), or **Safari**, an in-app Safari sheet that uses your Safari content blockers. See [Safari article links](#safari-article-links). The Safari option is by [dukevin](https://github.com/dukevin).
 - **Swipe to collapse**: swipe a comment to collapse it and its replies, or swipe further to collapse the whole thread. Choose left, right or both, with optional haptics. **Tap to collapse too** keeps tap and long press, and **AutoMod** always collapses AutoMod comments.
+- **Swipe posts**: in feeds, swipe a post left to upvote it, or further to downvote it, and swipe right to save it. Swiping again removes the vote or unsaves the post. Profiles keep Reddit's own swipes. It's on the **Swipe gestures** page.
 - **Play RedGIFs directly**: Reddit's copies of RedGIFs videos have no sound, so this plays the originals from RedGIFs instead. **Prefer SD** and **Prefer SD on mobile data** keep data use down. Your device connects to RedGIFs directly, and Reddit's silent version plays if RedGIFs can't be reached.
 
 ### Experimental features
 
 These are new, so they're off by default. They work in any app language.
 
-- **Keep feed position**: stay where you were in For You, and in Following and Popular while Reddit shows them as feed tabs, even after Reddit closes. Popular and Latest, which Reddit opens from the side menu, keep their place when **Reopen community and post** reopens them. Reddit normally jumps back to the top after 10 minutes away. Pull down to refresh.
-- **Reopen community and post**: brings back Popular and Latest from the side menu, the communities, custom feeds, profiles, searches and posts you had open, up to six screens deep, on Home or in the You or Inbox tab. Posts open at the top, with a **Back to where you were** button that scrolls to the comment you were reading, even in replies you had expanded or on a later page of comments. A post you opened at a comment, from the Inbox say, reopens at that comment. If a screen can't be reopened, the ones before it still come back. Communities use their default sort. If you open Reddit from a notification or a link, that screen is shown first, and going back to Home brings back where you were, unless you went further than that screen.
+- **Keep feed position**: stay where you were in For You, and in Following and Popular while Reddit shows them as feed tabs, even after Reddit closes. Popular and Latest, which Reddit opens from the side menu, keep their place when **Reopen screens** reopens them. Reddit normally jumps back to the top after 10 minutes away. Pull down to refresh.
+- **Reopen screens**: brings back Popular and Latest from the side menu, the communities, custom feeds, profiles, searches and posts you had open, up to six screens deep, on Home or in the You or Inbox tab. Posts open at the top, with a **Back to where you were** button that scrolls to the comment you were reading, even in replies you had expanded or on a later page of comments. A post you opened at a comment, from the Inbox say, reopens at that comment. If a screen can't be reopened, the ones before it still come back. Communities use their default sort. If you open Reddit from a notification or a link, that screen is shown first, and going back to Home brings back where you were, unless you went further than that screen.
 - **Restore after swiping away** and **Restore for**: by default, your place only comes back if iOS closed Reddit, for 12 hours. You can also have it back after swiping Reddit away, and keep it for 24 hours or with no limit.
 
 ### More
@@ -74,7 +78,7 @@ These are new, so they're off by default. They work in any app language.
 - **Open Reddit links here**: a separate Safari extension opens incoming Reddit links from Safari in the app, asking first each time. It does not block ads or enable the article browser.
 - **Stats**: see how much has been hidden in total, today and by filter, and how many tracker requests were blocked. It stays on your device.
 - **Backup**: export your settings, keywords and stats to a file, and import them later. No account details are included.
-- **Diagnostics**: check whether RedditFilter still finds posts and ads in Reddit's responses, see how Reddit was last closed, check Safari article links, and share a report with a bug report. Nothing leaves your device unless you share it.
+- **Diagnostics**: check whether RedditFilter still finds posts and ads in Reddit's responses, see how Reddit was last closed, check article links and settings scrolling, and share the results with a bug report. Nothing leaves your device unless you share it.
 - **Update check**: RedditFilter checks GitHub once a day for a new release. Turn it off under **About**.
 
 ## Safari article links
@@ -107,6 +111,27 @@ For accounts without a Reddit password, such as ones made with Apple, or if the 
 - **Open login link**: first tap **Email me a login link instead**, then copy the link from Reddit's email and paste it here.
 
 ## Install
+
+### Add the source
+
+On your iPhone or iPad, tap the app you sideload with. New releases then appear there.
+
+<p>
+  <a href="https://and101.github.io/RedditFilter/?app=altstore"><img src="docs/buttons/altstore.svg" height="48" alt="Add to AltStore"></a>
+  <a href="https://and101.github.io/RedditFilter/?app=sidestore"><img src="docs/buttons/sidestore.svg" height="48" alt="Add to SideStore"></a>
+  <a href="https://and101.github.io/RedditFilter/?app=feather"><img src="docs/buttons/feather.svg" height="48" alt="Add to Feather"></a>
+  <a href="https://and101.github.io/RedditFilter/?app=signet"><img src="docs/buttons/signet.svg" height="48" alt="Add to Signet"></a>
+</p>
+
+The AltStore button is for AltStore Classic. For any other app that takes AltStore sources, or if a button doesn't work, add this URL in the app:
+
+```
+https://and101.github.io/RedditFilter/source.json
+```
+
+If a release keeps the same Reddit version, your app may not show it as an update. Install it from the source again, or from [Releases](../../releases).
+
+### Other ways
 
 Download the IPA from [Releases](../../releases), sign it with your usual signer and install it.
 
